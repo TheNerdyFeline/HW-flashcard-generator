@@ -1,0 +1,22 @@
+{
+  "name": "HW-flashcard-generator",
+  "version": "0.0.0",
+  "description": "create basic and cloze flashcards, and then display random ones on command",
+  "main": "flash-gen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheNerdyFeline/HW-flashcard-generator.git"
+  },
+  "author": "Jackie Wellons",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheNerdyFeline/HW-flashcard-generator/issues"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "inquirer": "^3.0.6"
+  }
+}
