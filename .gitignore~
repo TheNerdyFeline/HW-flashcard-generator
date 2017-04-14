@@ -1,0 +1,5 @@
+.gitignore
+node_modules
+basic-cards.txt~
+cloze-cards.txt~
+flash-gen.js~
