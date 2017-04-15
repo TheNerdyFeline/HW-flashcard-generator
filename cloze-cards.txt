@@ -1,1 +1,5 @@
-Full Text: George Washington was the first president of the USA. Partial Text: ... was the first president of the USA. Deleted Portion: George Washington
+{
+  "back": "Peral Harbor was attacked in 1941",
+  "front": "Pearl Harbor was attacked in...",
+  "delete": "1941"
+}

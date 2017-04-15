@@ -1,13 +1,10 @@
 // declare var
-require('babel-register');
-require('./flash-gen.js');
 var fs = require("fs");
 var inquirer = require("inquirer");
 var save, newCard, currFlash, flashChoice;
 var counter = 5;
 var basicArr = [];
 var clozeArr = [];
-var currFlashArr = [];
 userChoice();
 
 // constructure function to build basic flashcard
@@ -22,6 +19,30 @@ function ClozeFlash(full, partial, cloze) {
     this.front = partial; // missing answer
     this.delete = cloze; // deleted portion
 }; // close ClozeFlash Function
+
+BasicFlash.prototype.addBasicFlash = function() {
+   //newCard = "\nFront: " + save.front + "," + " Back: " + save.back;
+   newCard = JSON.stringify(save, null, 2);
+    fs.appendFile("basic-cards.txt", newCard, function(err) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    console.log("New Basic Flashcard made.");
+	}
+    });
+}; // close add basicFlash function
+
+ClozeFlash.prototype.addClozeCard = function() {
+     newCard = JSON.stringify(save, null, 2);
+    //newCard = "\nFull Text: " + save.back + " Partial Text: " + save.front + " Deleted Portion: " + save.delete;
+    fs.appendFile("cloze-cards.txt", newCard, function(err) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    console.log("New Cloze Flashcard made.");
+	}
+    });
+}; // close add ClozeCard function
 
 // function to ask if user wants to be quizzed or make a new flashcard
 function userChoice() {
@@ -61,9 +82,10 @@ function makeFlashcard() {
 		}
 	    ]).then(function(basicAnswers) {
 		save = new BasicFlash(basicAnswers.front, basicAnswers.back);
-		basicArr.push(save);
-		console.log("New basic flashcard made.");
-		userChoice();
+		save.addBasicFlash();
+		setTimeout(function() {
+		    userChoice();
+		}, 1000);
 	    });
 	} else if (typeCard.cardType === "Cloze Flashcard") {
 	    inquirer.prompt([{
@@ -78,7 +100,7 @@ function makeFlashcard() {
 	    }
 	    ]).then(function(clozeAnswers) {
 		save = new ClozeFlash(clozeAnswers.back, clozeAnswers.front, clozeAnswers.delete);
-		clozeArr.push(save);
+		save.addClozeCard();
 		setTimeout(function(){
 		    userChoice();
 		}, 1000);
@@ -108,55 +130,45 @@ function runFlashcards() {
 function nextFlash() {
     if(counter > 0){
 	if(flashChoice === "Basic, Question and Answer") {
+	    fs.readFile("basic-cards.txt", "utf8", function(err, data) {
+		if (err) {
+		    throw err;
+		} else {
+		    basicArr = JSON.parse(data);
+		    console.log(basicArr);
 		    currFlash = basicArr.pop();
 		    counter--;
-		    console.log("Question: " + currFlash.front);
-		    inquirer.prompt([
-			{
-			    name: "confirm",
-			    type: "confirm",
-			    Message: "Ready for the answer?"
-			}
-			
-		    ]).then(function(getAnswer) {
-			if(getAnswer) {
-			    console.log("Answer: " + currFlash.back);
-			    setTimeout(function() {
-				nextFlash();
-			    }, 3000);
-			} else {
-			    console.log("No answer.");
-			}
-		    });  
-	} else if (flashChoice.quizType === "Cloze, fill in the missing part") {
-	    fs.readFile("cloze-cards.txt", "utf8", function(err, data) {
-		data.sort(function(a, b) {
-		    return 0.5 - Math.random();
-		});
-		currFlashArr = data.slice(0, 4);
-		currFlash = currFlashArr.pop();
-		counter--;
-		currFlash.frontBasicFlash();
-		inquirer.prompt([
-		    {
-			name: "confirm",
-			type: "confirm",
-			Message: "Ready for the answer?"
-		    }
-		    
-		]).then(function(getAnswer) {
-		    if(getAnswer) {
-			currFlash.backBasicFlash();
-			setTimeout(function() {
-			    nextFlash();
-			}, 3000);
-		    }
-		});
+		    console.log("Question: " + currFlash.Front);
+		    setTimeout(function() {
+			console.log("Answer: " + currFlash.Back);
+		    }, 10000);
+		    setTimeout(function() {
+			nextFlash();
+		    }, 13000);
+		}
+
 	    });
-	    
+	} else if (flashChoice === "Cloze, fill in the missing part") {
+	    fs.readFile("cloze-cards.txt", "utf8", function(err, data) {
+		if (err) {
+		    console.log(err); 
+		} else {
+		    clozeArr = JSON.parse(data);
+		    currFlash = clozeArr.pop();
+		    counter--;
+		    console.log("Question: " + currFlash.front);
+		    setTimeout(function() {
+			console.log("Answer: " + currFlash.back);
+		    }, 10000);
+		    setTimeout(function() {
+			nextFlash();
+		    }, 13000);
+		}		    
+	    });
 	} else {
 	    console.log("You have finished this round of flashcards");
 	    userChoice();
 	}
     } //close if counter > 0
 }; // close nextFlash function	    
+
