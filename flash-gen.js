@@ -5,6 +5,8 @@ var fs = require("fs");
 var inquirer = require("inquirer");
 var save, newCard, currFlash, flashChoice;
 var counter = 5;
+var basicArr = [];
+var clozeArr = [];
 var currFlashArr = [];
 userChoice();
 
@@ -20,41 +22,6 @@ function ClozeFlash(full, partial, cloze) {
     this.front = partial; // missing answer
     this.delete = cloze; // deleted portion
 }; // close ClozeFlash Function
-
-//protype functions to append each new flashcard to txt file
-// save info to txt docs based on type of flashcard made
-BasicFlash.prototype.addBasicFlash = function() {
-    newCard = JSON.stringify(save, null, 2);
-    fs.appendFile("basic-cards.txt", newCard, function(err) {
-	if (err) {
-	    console.log(err);
-	} else {
-	    console.log("New Basic Flashcard made.");
-	}
-    });
-}; // close add basicFlash function
-
-// function to show user front of flash card
-BasicFlash.prototype.frontBasicFlash = function() {
-    console.log(BasicFlash.front);
-}; // close show front of basic flash card
-
-// function to show user back of flash card
-BasicFlash.prototype.backBasicFlash = function() {
-    console.log(BasicFlash.back);
-}; // close show back of basic flash card
-
-ClozeFlash.prototype.addClozeCard = function() {
-     newCard = JSON.stringify(save, null, 2);
-    //newCard = "\nFull Text: " + save.back + " Partial Text: " + save.front + " Deleted Portion: " + save.delete;
-    fs.appendFile("cloze-cards.txt", newCard, function(err) {
-	if (err) {
-	    console.log(err);
-	} else {
-	    console.log("New Cloze Flashcard made.");
-	}
-    });
-}; // close add ClozeCard function
 
 // function to ask if user wants to be quizzed or make a new flashcard
 function userChoice() {
@@ -94,10 +61,9 @@ function makeFlashcard() {
 		}
 	    ]).then(function(basicAnswers) {
 		save = new BasicFlash(basicAnswers.front, basicAnswers.back);
-		save.addBasicFlash();
-		setTimeout(function(){
-		    userChoice();
-		}, 1000);
+		basicArr.push(save);
+		console.log("New basic flashcard made.");
+		userChoice();
 	    });
 	} else if (typeCard.cardType === "Cloze Flashcard") {
 	    inquirer.prompt([{
@@ -112,7 +78,7 @@ function makeFlashcard() {
 	    }
 	    ]).then(function(clozeAnswers) {
 		save = new ClozeFlash(clozeAnswers.back, clozeAnswers.front, clozeAnswers.delete);
-		save.addClozeCard();
+		clozeArr.push(save);
 		setTimeout(function(){
 		    userChoice();
 		}, 1000);
@@ -142,33 +108,26 @@ function runFlashcards() {
 function nextFlash() {
     if(counter > 0){
 	if(flashChoice === "Basic, Question and Answer") {
-	    console.log("This works");
-	    fs.readFile("basic-cards.txt", "utf8", function(err, data) {
-		//data.sort(function(a, b) {
-		 // return 0.5 - Math.random();
-		console.log(data[0]);
-		//});
-		//currFlashArr = data.slice(0, 4);
-		//currFlash = currFlashArr.pop();
-		currFlash = data[1];
-		counter--;
-		currFlash.frontBasicFlash();
-		inquirer.prompt([
-		    {
-			name: "confirm",
-			type: "confirm",
-			Message: "Ready for the answer?"
-		    }
-		    
-		]).then(function(getAnswer) {
-		    if(getAnswer) {
-			currFlash.backBasicFlash();
-			setTimeout(function() {
-			    nextFlash();
-			}, 3000);
-		    }
-		});
-	    });
+		    currFlash = basicArr.pop();
+		    counter--;
+		    console.log("Question: " + currFlash.front);
+		    inquirer.prompt([
+			{
+			    name: "confirm",
+			    type: "confirm",
+			    Message: "Ready for the answer?"
+			}
+			
+		    ]).then(function(getAnswer) {
+			if(getAnswer) {
+			    console.log("Answer: " + currFlash.back);
+			    setTimeout(function() {
+				nextFlash();
+			    }, 3000);
+			} else {
+			    console.log("No answer.");
+			}
+		    });  
 	} else if (flashChoice.quizType === "Cloze, fill in the missing part") {
 	    fs.readFile("cloze-cards.txt", "utf8", function(err, data) {
 		data.sort(function(a, b) {
