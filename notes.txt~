@@ -1,9 +1,126 @@
 Question: Who was the first president of the USA? Answer: George Washington
-Question: Who was the 2nd president of the USA? Answer: Adams
-Question: Who is the current President? Answer: Trump
 Question: What year was the attack on Pearl Harbor? Answer: 1941
 Question: What year did the USA join WW2? Answer: 1941
 Question: What year did WW2 start? Answer: 1939
 Question: What year did WW2 end? Answer: 1945
 Question: When did The Great Depression Start? Answer: 1929
 Question: When did The Great Depression End? Answer: 1939
+
+
+data.sort(function(a, b) {
+		     return 0.5 - Math.random();
+		    console.log(data[0]);
+		    });
+		    currFlashArr = data.slice(0, 4);
+		    currFlash = currFlashArr.pop();
+		    currFlash = data[1];
+
+    newCard = JSON.stringify(save, null, 2);
+    fs.appendFile("basic-cards.txt", newCard, function(err) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    console.log("New Basic Flashcard made.");
+	}
+    });
+
+
+//protype functions to append each new flashcard to txt file
+// save info to txt docs based on type of flashcard made
+BasicFlash.prototype.addBasicFlash = function() {
+    basicArr.push(save);
+}; // close add basicFlash function
+
+    newCard = JSON.stringify(save, null, 2);
+    fs.appendFile("basic-cards.txt", save, function(err) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    console.log("New Basic Flashcard made.");
+	}
+    });
+
+// function to show user front of flash card
+BasicFlash.prototype.frontBasicFlash = function() {
+    console.log(BasicFlash.front);
+}; // close show front of basic flash card
+
+// function to show user back of flash card
+BasicFlash.prototype.backBasicFlash = function() {
+    console.log(BasicFlash.back);
+}; // close show back of basic flash card
+
+
+ClozeFlash.prototype.addClozeCard = function() {
+     newCard = JSON.stringify(save, null, 2);
+    //newCard = "\nFull Text: " + save.back + " Partial Text: " + save.front + " Deleted Portion: " + save.delete;
+    fs.appendFile("cloze-cards.txt", newCard, function(err) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    console.log("New Cloze Flashcard made.");
+	}
+    });
+}; // close add ClozeCard function
+
+
+fs.readFile("basic-cards.txt", "utf8", function(err, data) {
+		if (err) {
+		    console.log(err);
+		} else {
+		    for (var i = 0; i < data.length; i++) {
+			currFlashArr.push(data[i]);
+			console.log(data[0]);
+		    }
+
+
+	    inquirer.prompt([
+		{
+		    name: "confirm",
+		    type: "confirm",
+		    Message: "Ready for the answer?",
+		    default: true
+		}
+		
+	    ]).then(function(getAnswer) {
+		if(getAnswer) {
+		    console.log("Answer: " + currFlash.back);
+		    setTimeout(function() {
+			nextFlash();
+		    }, 3000);
+			} else {
+			    console.log("No answer.");
+			}
+	    });
+
+	    setTimeout(function() {
+		console.log(currFlash.back);
+	    }, 5000);
+
+	if(flashChoice === "Basic, Question and Answer") {
+	    basicArr.sort(function(a, b) {
+		return 0.5 - Math.random();
+	    };)
+	    	    currBasicArr = basicArr.splice(0, 4);
+
+
+		    /*inquirer.prompt([
+			{
+			    name: "confirm",
+			    type: "confirm",
+			    Message: "Ready for the answer?"
+			}
+			
+		    ]).then(function(err, getAnswer) {
+			if(err) {
+			    console.log(err);
+			} else if(getAnswer.confirm === true) {
+			    console.log("Answer: " + currFlash.back);
+			    setTimeout(function() {
+				nextFlash();
+			    }, 3000);
+			} else {
+			    console.log("No answer.");
+			}
+		    }); */
+		}

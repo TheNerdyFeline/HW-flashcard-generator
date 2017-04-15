@@ -3,9 +3,7 @@ var fs = require("fs");
 var inquirer = require("inquirer");
 var save, newCard, currFlash, flashChoice;
 var counter = 5;
-var basicArr = [];
-var clozeArr = [];
-userChoice();
+makeFlashcard();
 
 // constructure function to build basic flashcard
 function BasicFlash(question, answer) {
@@ -44,22 +42,8 @@ ClozeFlash.prototype.addClozeCard = function() {
     });
 }; // close add ClozeCard function
 
-// function to ask if user wants to be quizzed or make a new flashcard
-function userChoice() {
-    inquirer.prompt([{
-	name: "toDo",
-	type: "list",
-	message: "What would you like to do?",
-	choices: ["Make a new flashcard", "Run through current flashcards"]
-    }	
-    ]).then(function(answer) {
-	if(answer.toDo === "Make a new flashcard"){
-	    makeFlashcard();
-	} else if (answer.toDo === "Run through current flashcards"){
-	    runFlashcards();
-	}
-    });
-} // close userChoice
+
+
 
 // use inquirer to make flash cards based on user input
 function makeFlashcard() {
@@ -84,7 +68,7 @@ function makeFlashcard() {
 		save = new BasicFlash(basicAnswers.front, basicAnswers.back);
 		save.addBasicFlash();
 		setTimeout(function() {
-		    userChoice();
+		    makeFlashcard();
 		}, 1000);
 	    });
 	} else if (typeCard.cardType === "Cloze Flashcard") {
@@ -102,7 +86,7 @@ function makeFlashcard() {
 		save = new ClozeFlash(clozeAnswers.back, clozeAnswers.front, clozeAnswers.delete);
 		save.addClozeCard();
 		setTimeout(function(){
-		    userChoice();
+		    makeFlashcard();
 		}, 1000);
 	    });
 
@@ -111,64 +95,4 @@ function makeFlashcard() {
 	}
     });
 }; // close makeFlashcard function
-
-// display random flashcard- based on type of card asked for?
-function runFlashcards() {
-    inquirer.prompt([
-	{
-	    name: "quizType",
-	    type: "list",
-	    message: "You will get 5 flashcards. What type of flashcards would you like to use?",
-	    choices: ["Basic, Question and Answer", "Cloze, fill in the missing part", "Random"]
-	}
-    ]).then(function(flashType) {
-	flashChoice = flashType.quizType;
-	nextFlash();
-    });
-} // close runFlashcards
-			  
-function nextFlash() {
-    if(counter > 0){
-	if(flashChoice === "Basic, Question and Answer") {
-	    fs.readFile("basic-cards.txt", "utf8", function(err, data) {
-		if (err) {
-		    throw err;
-		} else {
-		    basicArr = JSON.parse(data);
-		    console.log(basicArr);
-		    currFlash = basicArr.pop();
-		    counter--;
-		    console.log("Question: " + currFlash.Front);
-		    setTimeout(function() {
-			console.log("Answer: " + currFlash.Back);
-		    }, 10000);
-		    setTimeout(function() {
-			nextFlash();
-		    }, 13000);
-		}
-
-	    });
-	} else if (flashChoice === "Cloze, fill in the missing part") {
-	    fs.readFile("cloze-cards.txt", "utf8", function(err, data) {
-		if (err) {
-		    console.log(err); 
-		} else {
-		    clozeArr = JSON.parse(data);
-		    currFlash = clozeArr.pop();
-		    counter--;
-		    console.log("Question: " + currFlash.front);
-		    setTimeout(function() {
-			console.log("Answer: " + currFlash.back);
-		    }, 10000);
-		    setTimeout(function() {
-			nextFlash();
-		    }, 13000);
-		}		    
-	    });
-	} else {
-	    console.log("You have finished this round of flashcards");
-	    userChoice();
-	}
-    } //close if counter > 0
-}; // close nextFlash function	    
 

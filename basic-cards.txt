@@ -1,3 +1,9 @@
 
 Front: Who was the first president of the USA?, Back: Georger Washignton
-Front: What year was Peral Harbor attacked?, Back: 1941
+Front: What year was Peral Harbor attacked?, Back: 1941{
+  "front": "When did the USA join WW2?",
+  "back": "1941"
+}{
+  "front": "When did The Great Depression Start?",
+  "back": "1929"
+}

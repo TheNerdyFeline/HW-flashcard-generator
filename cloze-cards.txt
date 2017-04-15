@@ -3,3 +3,8 @@
   "front": "Pearl Harbor was attacked in...",
   "delete": "1941"
 }
+{
+  "back": "The Great Depression ended in 1939.",
+  "front": "...ended in 1939.",
+  "delete": "The Great Depression"
+}
